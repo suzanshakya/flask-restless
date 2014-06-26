@@ -450,7 +450,7 @@ class API(ModelView):
                  include_columns=None, include_methods=None,
                  validation_exceptions=None, results_per_page=10,
                  max_results_per_page=100, post_form_preprocessor=None,
-                 preprocessors=None, postprocessors=None, primary_key=None,
+                 preprocessors=None, postprocessors=None, primary_key=None, deep=None,
                  *args, **kw):
         """Instantiates this view with the specified attributes.
 
@@ -581,6 +581,7 @@ class API(ModelView):
         self.results_per_page = results_per_page
         self.max_results_per_page = max_results_per_page
         self.primary_key = primary_key
+        self.deep = deep
         self.postprocessors = defaultdict(list)
         self.preprocessors = defaultdict(list)
         self.postprocessors.update(upper_keys(postprocessors or {}))
@@ -1003,7 +1004,7 @@ class API(ModelView):
             relations &= (cols | rels)
         elif self.exclude_columns is not None:
             relations -= frozenset(self.exclude_columns)
-        deep = dict((r, {}) for r in relations)
+        deep = self.deep or dict((r, {}) for r in relations)
 
         # for security purposes, don't transmit list as top-level JSON
         if isinstance(result, Query):
