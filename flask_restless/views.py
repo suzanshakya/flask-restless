@@ -887,7 +887,7 @@ class API(ModelView):
             relations &= (cols | rels)
         elif self.exclude_columns is not None:
             relations -= frozenset(self.exclude_columns)
-        deep = dict((r, {}) for r in relations)
+        deep = self.deep or dict((r, {}) for r in relations)
         return to_dict(inst, deep, exclude=self.exclude_columns,
                        exclude_relations=self.exclude_relations,
                        include=self.include_columns,
@@ -1069,7 +1069,7 @@ class API(ModelView):
             # create a placeholder for the relations of the returned models
             related_model = get_related_model(self.model, relationname)
             relations = frozenset(get_relations(related_model))
-            deep = dict((r, {}) for r in relations)
+            deep = self.deep or dict((r, {}) for r in relations)
             if relationinstid is not None:
                 related_value_instance = get_by(self.session, related_model,
                                                 relationinstid)
